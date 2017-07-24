@@ -1,6 +1,15 @@
 <?php
 $json = (file_get_contents('http://api.openweathermap.org/data/2.5/weather?q=Moscow,ru&units=metric&appid=2a05c2f887dbb8ec9888d24a55b5dbb7'));
-$decode = (json_decode($json, true));
+$fileName = "cashWeather.json";
+$openFile = fopen("$fileName", 'a+');
+if ((filemtime("$fileName") - time() <= -3600) or (filesize("$fileName") == 0)) {
+    $clean = fopen("$fileName", 'w');
+    fclose($clean);
+    fwrite($openFile, $json);
+}
+fclose($openFile);
+$boom = file_get_contents("$fileName");
+$decode = json_decode($boom, true);
 $temp = intval($decode["main"]["temp"]);
 $pressure = intval($decode["main"]["pressure"]);
 $weatherStat = ($decode["weather"]["0"]["description"]);
@@ -8,14 +17,15 @@ $humidity = ($decode["main"]["humidity"]);
 $windSpeed = ($decode["wind"]["speed"]);
 $sunset = ($decode["sys"]["sunset"]);
 $sunrise = ($decode["sys"]["sunrise"]);
-$weatherStatURL = urlencode($weatherStat);
-$translate = file_get_contents("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20170723T175246Z.236743f9d102d4ae.d07ab56c33c2827e8258ff52323fc147f0c8dfc4&text=$weatherStatURL&lang=en-ru&format=plain&options=1");
-$decodeTranslate = json_decode($translate, true);
-$endWeatherStat = ($decodeTranslate["text"]["0"]);
 $timeSunsetFormat = date("G:i", $sunset);
 $timeSunriseFormst = date("G:i", $sunrise);
 $timeNow = date("G:i");
 $dateNow = date("d.m.y");
+$weatherStatURL = urlencode($weatherStat);
+$translate = file_get_contents("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20170723T175246Z.236743f9d102d4ae.d07ab56c33c2827e8258ff52323fc147f0c8dfc4&text=$weatherStatURL&lang=en-ru&format=plain&options=1");
+$decodeTranslate = json_decode($translate, true);
+$endWeatherStat = ($decodeTranslate["text"]["0"]);
+$lastUpdate = date("G:i d.m.y", filemtime("$fileName"));
 ?>
 <!doctype html>
 <html lang="en">
@@ -29,6 +39,12 @@ $dateNow = date("d.m.y");
             display: inline-block;
             margin-right: 10px;
         }
+
+        #lastUp {
+            font-size: 14px;
+            text-align: left;
+        }
+
     </style>
 </head>
 <body>
@@ -45,13 +61,13 @@ $dateNow = date("d.m.y");
                 <p><span>Погодные условия: </span><?= $endWeatherStat ?></p>
             </li>
             <li>
-                <p><span>Давление: </span><?= $pressure ?> Паскалей</p>
+                <p><span>Давление: </span><?= $pressure ?> гПа</p>
             </li>
             <li>
                 <p><span>Влажность воздуха: </span><?= $humidity ?> %</p>
             </li>
             <li>
-                <p><span>Скорость ветра: </span><?= $windSpeed ?> метра/с</p>
+                <p><span>Скорость ветра: </span><?= $windSpeed ?> м/с</p>
             </li>
             <li>
                 <p><span>Текущее время: </span><?= $timeNow ?></p>
@@ -68,6 +84,7 @@ $dateNow = date("d.m.y");
 
         </ul>
     </nav>
+    <p id="lastUp">Последнее обнавление данных: <?= $lastUpdate ?></p>
 </div>
 
 </body>

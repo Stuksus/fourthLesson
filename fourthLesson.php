@@ -8,8 +8,8 @@ if ((filemtime("$fileName") - time() <= -3600) or (filesize("$fileName") == 0)) 
     fwrite($openFile, $json);
 }
 fclose($openFile);
-$boom = file_get_contents("$fileName");
-$decode = json_decode($boom, true);
+$cashFile = file_get_contents("$fileName");
+$decode = json_decode($cashFile, true);
 $temp = intval($decode["main"]["temp"]);
 $pressure = intval($decode["main"]["pressure"]);
 $weatherStat = ($decode["weather"]["0"]["description"]);

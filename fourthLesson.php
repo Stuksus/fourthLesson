@@ -84,7 +84,7 @@ $lastUpdate = date("G:i d.m.y", filemtime("$fileName"));
 
         </ul>
     </nav>
-    <p id="lastUp">Последнее обнавление данных: <?= $lastUpdate ?></p>
+    <p id="lastUp">Последнее обновление данных: <?= $lastUpdate ?></p>
 </div>
 
 </body>

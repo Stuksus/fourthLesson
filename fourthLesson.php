@@ -1,8 +1,8 @@
 <?php
-$json = (file_get_contents('http://api.openweathermap.org/data/2.5/weather?q=Moscow,ru&units=metric&appid=2a05c2f887dbb8ec9888d24a55b5dbb7'));
 $fileName = "cashWeather.json";
 $openFile = fopen("$fileName", 'a+');
 if ((filemtime("$fileName") - time() <= -3600) or (filesize("$fileName") == 0)) {
+    $json = (file_get_contents('http://api.openweathermap.org/data/2.5/weather?q=Moscow,ru&units=metric&appid=2a05c2f887dbb8ec9888d24a55b5dbb7'));
     $clean = fopen("$fileName", 'w');
     fclose($clean);
     fwrite($openFile, $json);
